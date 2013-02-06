@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * ClickTraq
+ *
+ * @author Carl Saggs
+ * @license MIT
+ */
 include("../config/config.php");
 
 // Ensure URL is safe (ish)
@@ -43,6 +48,11 @@ while ($result = $q->fetch(PDO::FETCH_ASSOC)) {
 				top:0px;
 				left:0px;
 			}
+			#window {
+				width:100%;
+				border:0;
+				min-height:600px;
+			}
 		</style>
 		<script>
 			var map = <?php echo json_encode($clicks); ?>
@@ -61,7 +71,7 @@ while ($result = $q->fetch(PDO::FETCH_ASSOC)) {
 			</div>
 		</div>
 		<div class='viewport' style='position:relative;'>
-			<iframe id='window' src='<?php echo $_GET['show']?>' style='width:100%;border:0;min-height:600px;'></iframe>
+			<iframe id='window' src='<?php echo $_GET['show']?>'></iframe>
 			<canvas id='canvas'></canvas>
 		</div>
 		<script src='assets/heatmaps/webgl-heatmap.js' type='text/javascript'></script>
@@ -84,7 +94,7 @@ while ($result = $q->fetch(PDO::FETCH_ASSOC)) {
 			// Weight results a little
 			var max_weighting = 20;
 			var impact = max_weighting/map.length;
-			
+
 			// Show it on a heatmap
 			for(var i in map){
 				heatmap.addPoint(map[i].x, map[i].y, 28, impact);

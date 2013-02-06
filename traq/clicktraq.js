@@ -1,6 +1,9 @@
 /**
  * Clicktraq
  * A simple open source click heatmaping tool
+ *
+ * @author Carl Saggs
+ * @license MIT
  */
 (function(){
 

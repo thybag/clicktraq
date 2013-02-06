@@ -1,5 +1,10 @@
 <?php
-
+/**
+ * ClickTraq
+ *
+ * @author Carl Saggs
+ * @license MIT
+ */
 include("../config/config.php");
 
 // Get raw input since we basically just dumped a JSON string in to the post request
