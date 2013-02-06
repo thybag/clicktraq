@@ -1,13 +1,8 @@
 <?php
 
-//http://codeflow.org/entries/2013/feb/04/high-performance-js-heatmaps/
-$viewing_page = str_replace(array('"',"'"),'',strip_tags($_GET['show']));
+include("../config/config.php");
 
-$config = array(
-	'dsn' 	=> 'mysql:dbname=clicktraq;host=localhost',
-	'user' 	=> 'root',
-	'password' 	=> ''
-);
+$viewing_page = str_replace(array('"',"'"),'',strip_tags($_GET['show']));
 
 // Connect to DB
 try {
@@ -79,13 +74,15 @@ while ($result = $q->fetch(PDO::FETCH_ASSOC)) {
 			try{
 			    var heatmap = createWebGLHeatmap({"canvas": document.getElementById("canvas")});
 			}
-			catch(error){
+			catch(error)
+			{
 			    // handle the error
 			}
-			var c, i;
-			for(i in map){
-				c = map[i];
-				heatmap.addPoint(c.x, c.y, 28, 0.3);
+			var max_weighting = 20;
+			var impact = max_weighting/map.length;
+
+			for(var i in map){
+				heatmap.addPoint(map[i].x, map[i].y, 28, impact);
 			}
 			heatmap.update();
 			heatmap.display();

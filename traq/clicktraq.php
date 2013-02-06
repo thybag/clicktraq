@@ -1,13 +1,7 @@
 <?php
 
-//http://codeflow.org/entries/2013/feb/04/high-performance-js-heatmaps/
+include("../config/config.php");
 $request_body = file_get_contents('php://input');
-
-$config = array(
-	'dsn' 	=> 'mysql:dbname=clicktraq;host=localhost',
-	'user' 	=> 'root',
-	'password' 	=> ''
-);
 
 // Connect to DB
 try {
