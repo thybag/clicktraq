@@ -15,7 +15,7 @@
 	var payload = '';
 	// profile. Acceible version of data.
 	var profile = {
-		"webpage": window.location.href.replace(window.location.hash,''),
+		"webpage": window.location.protocol+'//'+window.location.host+window.location.pathname+(window.location.search ? window.location.search : ""),
 		"user_agent": navigator.userAgent,
 		"platform": navigator.platform,
 		"screen_resolution": screen.width+"x"+screen.height,
@@ -80,9 +80,6 @@
 		xmlhttp.open("POST", location, false);
 		xmlhttp.send(data);
 	}
-
-
-
 
 
 })();
