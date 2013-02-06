@@ -27,12 +27,30 @@
 	// Create xmlHttpRequest object.
 	try {var xmlhttp = window.XMLHttpRequest?new XMLHttpRequest(): new ActiveXObject("Microsoft.XMLHTTP");}  catch (e) { }
 
+	// Add base.js methods
+	var base = {};
+	// Add an event listener
+	base.addEventListener = function(obj, event, callback){
+		if(window.addEventListener){
+				//Browsers that don't suck
+				obj.addEventListener(event, callback, false);
+		}else{
+				//IE8/7
+				obj.attachEvent('on'+event, callback);
+		}
+	}
+	// get real x/y of click
+	base.get_real_position = function(x,y){
+		return {
+			"x": x + (window.scrollX || document.body.scrollLeft ||  document.body.parentNode.scrollLeft || 0),
+			"y": y + (window.scrollY ||  document.body.scrollTop ||  document.body.parentNode.scrollTop || 0)
+		}
+	}
+
 	// Onclick, update profile & set payloads
-	document.addEventListener("click", function(e){
-
-		var p = get_real_position(e.x,e.y);
+	base.addEventListener(document, "click", function(event){
+		var p = base.get_real_position(event.pageX, event.pageY);
 		var time = get_current_duration();
-
 		// Update profile
 		profile.clicks.push({
 			"time": time,
@@ -47,19 +65,12 @@
 
 	}, false);
 
-	window.addEventListener("beforeunload", function(){
+	base.addEventListener(window, "beforeunload", function(){
 		// User is closing page, send data to server 
 		// This needs to be fast, else the window will close before the information gets sent.
 		send_data("/traq/traq/clicktraq.php", payload);
 	}, false);
 
-	// get real x/y of click
-	function get_real_position(x,y){
-		return {
-			"x": x + (window.scrollX || document.body.scrollLeft ||  document.body.parentNode.scrollLeft || 0),
-			"y": y + (window.scrollY ||  document.body.scrollTop ||  document.body.parentNode.scrollTop || 0)
-		}
-	}
 	// Get duration time
 	function get_current_duration(){
 		return (new Date().getTime())-timer_start;
@@ -69,6 +80,10 @@
 		xmlhttp.open("POST", location, false);
 		xmlhttp.send(data);
 	}
+
+
+
+
 
 })();
 
