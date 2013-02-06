@@ -1,7 +1,7 @@
 <?php
 
 //http://codeflow.org/entries/2013/feb/04/high-performance-js-heatmaps/
-$request_body = file_get_contents('php://input');
+$viewing_page = str_replace(array('"',"'"),'',strip_tags($_GET['show']));
 
 $config = array(
 	'dsn' 	=> 'mysql:dbname=clicktraq;host=localhost',
@@ -18,12 +18,14 @@ try {
 }
 
 $q = $db->prepare('SELECT * FROM page_profiles WHERE webpage = ?');
-$q->execute(array($_GET['show']));
+$q->execute(array($viewing_page));
 
+$clicks = array();
 //Add returned products to array
 while ($result = $q->fetch(PDO::FETCH_ASSOC)) {
-	//$data[] = $result['name'];
+	$clicks = array_merge(json_decode($result['clicks']),$clicks);
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -32,26 +34,63 @@ while ($result = $q->fetch(PDO::FETCH_ASSOC)) {
 		<title>Click traq</title> 
 		<style type="text/css"> 
 			 @import url("//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.2.2/css/bootstrap.min.css");
-			 
 		</style>
 		<style type="text/css"> 
 			.navbar{margin-bottom:0px;border-radius:0;}
 			.navbar-inner {border-radius: 0;}
 			.navbar-inner input {margin-top:5px;}
+
+			#canvas {
+				position: absolute;
+				top:0px;
+				left:0px;
+			}
 		</style>
+		<script>
+			var map = <?php echo json_encode($clicks); ?>
+		</script>
 	</head>
 	<body>
 		<div class="navbar navbar-inverse">
 			 <div class="navbar-inner">
 			 	<a class="brand" href="#">ClickTraq</a>
 			 	<div class='pull-right'>
-				 	<input type="text" class="search-query" placeholder="See page...">
+			 		<form method='get' action='' class='navbar-form'>
+					 	<input type="text" class="search-query span4" name='show' placeholder="See page..." value="<?php echo $viewing_page; ?>">
+					 	<input type='submit' class='btn btn-primary' value='View' />
+					 </form>
 				 </div>
 			</div>
 		</div>
-		<div class='viewport'>
-			<iframe src='<?php echo $_GET['show']?>' style='width:100%;border:0;min-height:600px;'></iframe>
+		<div class='viewport' style='position:relative;'>
+			<iframe id='window' src='<?php echo $_GET['show']?>' style='width:100%;border:0;min-height:600px;'></iframe>
+			<canvas id='canvas'></canvas>
 		</div>
+		<script src='assets/heatmaps/webgl-heatmap.js' type='text/javascript'></script>
+		<script>
+			// Setup page
+			ww = window.innerWidth
+			wh = window.innerHeight
+			document.getElementById("canvas").width = ww;
+			document.getElementById("canvas").height = wh;
+			document.getElementById("window").height = wh;
+
+			// Generate heatmap
+			try{
+			    var heatmap = createWebGLHeatmap({"canvas": document.getElementById("canvas")});
+			}
+			catch(error){
+			    // handle the error
+			}
+			var c, i;
+			for(i in map){
+				c = map[i];
+				heatmap.addPoint(c.x, c.y, 28, 0.3);
+			}
+			heatmap.update();
+			heatmap.display();
+
+		</script>
 	</body>
 </html>
 

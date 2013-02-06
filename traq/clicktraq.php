@@ -5,7 +5,7 @@ $request_body = file_get_contents('php://input');
 
 $config = array(
 	'dsn' 	=> 'mysql:dbname=clicktraq;host=localhost',
-	'user' 	=> '',
+	'user' 	=> 'root',
 	'password' 	=> ''
 );
 

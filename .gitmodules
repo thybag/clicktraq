@@ -1,0 +1,3 @@
+[submodule "viewer/assets/heatmaps"]
+	path = viewer/assets/heatmaps
+	url = git://github.com/pyalot/webgl-heatmap.git
