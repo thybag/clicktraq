@@ -5,10 +5,21 @@
  * @author Carl Saggs
  * @license MIT
  */
+
+// Set script to stay running, then close the connection so we don't keep the browser waiting
+ignore_user_abort(true); 
+header("Content-Length: 0");
+header("Connection: close");
+flush();
+
+// Get config
 include("../config/config.php");
 
 // Get raw input since we basically just dumped a JSON string in to the post request
-$request_body = file_get_contents('php://input');
+$request = json_decode(file_get_contents('php://input'));
+
+// Die if unable to read data
+if(!$request) die();
 
 // Connect to DB
 try {
@@ -17,8 +28,8 @@ try {
 }catch (PDOException $e) {
 	die("DB error.");
 }
-// read JSON response
-$request = json_decode($request_body);
+
+
 
 // Shovel it in to DB
 $q = $db->prepare("INSERT INTO page_profiles (webpage, time, screen_resolution, platform, user_agent, total_clicks, visit_duration, clicks) VALUES (?,?,?,?,?,?,?,?)");
@@ -32,4 +43,7 @@ $q->execute(array(
 	$request->visit_duration,
 	json_encode($request->clicks)
 ));
+
+
+
 
