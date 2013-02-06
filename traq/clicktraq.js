@@ -12,7 +12,7 @@
 	var payload = '';
 	// profile. Acceible version of data.
 	var profile = {
-		"webpage": window.location.href,
+		"webpage": window.location.href.replace(window.location.hash,''),
 		"user_agent": navigator.userAgent,
 		"platform": navigator.platform,
 		"screen_resolution": screen.width+"x"+screen.height,
@@ -47,7 +47,7 @@
 	window.addEventListener("beforeunload", function(){
 		// User is closing page, send data to server 
 		// This needs to be fast, else the window will close before the information gets sent.
-		send_data("http://proj.local/traq/tracker.php", payload);
+		send_data("/traq/traq/clicktraq.php", payload);
 	}, false);
 
 	// get real x/y of click

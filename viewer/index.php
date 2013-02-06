@@ -2,6 +2,7 @@
 
 include("../config/config.php");
 
+// Ensure URL is safe (ish)
 $viewing_page = str_replace(array('"',"'"),'',strip_tags($_GET['show']));
 
 // Connect to DB
@@ -12,10 +13,12 @@ try {
 	die("DB error.");
 }
 
+// Grab relevant data
 $q = $db->prepare('SELECT * FROM page_profiles WHERE webpage = ?');
 $q->execute(array($viewing_page));
 
 $clicks = array();
+
 //Add returned products to array
 while ($result = $q->fetch(PDO::FETCH_ASSOC)) {
 	$clicks = array_merge(json_decode($result['clicks']),$clicks);
@@ -64,11 +67,11 @@ while ($result = $q->fetch(PDO::FETCH_ASSOC)) {
 		<script src='assets/heatmaps/webgl-heatmap.js' type='text/javascript'></script>
 		<script>
 			// Setup page
-			ww = window.innerWidth
-			wh = window.innerHeight
+			ww = window.innerWidth;
+			wh = window.innerHeight;
 			document.getElementById("canvas").width = ww;
-			document.getElementById("canvas").height = wh;
-			document.getElementById("window").height = wh;
+			document.getElementById("canvas").height = wh-45;
+			document.getElementById("window").height = wh-45;
 
 			// Generate heatmap
 			try{
@@ -78,9 +81,11 @@ while ($result = $q->fetch(PDO::FETCH_ASSOC)) {
 			{
 			    // handle the error
 			}
+			// Weight results a little
 			var max_weighting = 20;
 			var impact = max_weighting/map.length;
-
+			
+			// Show it on a heatmap
 			for(var i in map){
 				heatmap.addPoint(map[i].x, map[i].y, 28, impact);
 			}

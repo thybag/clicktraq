@@ -1,6 +1,8 @@
 <?php
 
 include("../config/config.php");
+
+// Get raw input since we basically just dumped a JSON string in to the post request
 $request_body = file_get_contents('php://input');
 
 // Connect to DB
